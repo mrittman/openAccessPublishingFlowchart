@@ -1,0 +1,74 @@
+<* How to choose an open access journal
+ *
+ * Run this file by running:
+ * java -jar DataTagsLib  
+ *
+ * available tags: complete, preprint, preprintFeedback, journalKnown, 
+ * licenses, licenseKnown
+ *
+ *>
+  
+ <-- check if the author has finished writing
+[ask: {text: Is your manuscript complete?}
+{answers: 
+
+	<-- case where the author has completed writing
+	{yes: [set: complete=yes]
+	
+		<-- let's ask about preprints
+		[ask: {text: Have you submitted a preprint?}
+		{answers: 
+
+		<-- case where a preprint exists
+			{yes: [set: preprint=yes]
+				[ask: {text: Have you incorporated any feedback you received from the preprint?}
+				{answers: 
+					{yes: [set: preprintFeedback=yes]}
+					{no: [set: preprintFeedback=no]
+						[todo: go back to have you submitted a preprint??]}
+				}]
+			} <-- end of 'yes' (preprint submitted)
+			
+			<-- where no preprint exists
+			{no: [set: preprint=no]
+				[todo: add something about posting preprints]
+			} 
+		}]
+	} <-- end of 'yes' (writing complete)
+	
+	<-- where writing is not complete
+	{no:[set: complete=no]} 
+}] <-- end of asking about writing completeness
+
+[ask: {text: Do you know which journal you will submit to?}
+{answers:
+
+	<-- fully open access journal
+	{yes, a fully open access journal: [set: journalKnown=oa]}
+	
+	<-- hybrid journal
+	{yes, a non-open journal with an open access option: [set: journalKnown=hybrid]}
+	
+	<-- no open access option
+	{yes, and it has no gold open access option: [set: journalKnown=notOpen]}
+	
+	<-- don't know yet
+	{no: [set: journalKnown=no]
+		[todo: tell author to consult DOAJ and think.check.submit]
+		[todo: add a goto this question again]
+	}
+		
+
+}]
+
+<-- let's see about licensing
+[ask: {text: Does the journal provide a choice of licenses?}
+{answers:
+
+	<-- range of licensing choices
+	{yes: [set: licenses=many]}
+	
+	<-- only one choice of license
+	{no: [set: licenses=single]}
+	
+}]

@@ -6,6 +6,14 @@
  * available tags: complete, preprint, preprintFeedback, journalKnown, 
  * licenses, licenseKnown
  *
+ * Current open questions:
+ *   - Should the preprints part be in a separate chart? Is it a 
+ *     recommendation or could it be compulsory? 
+ *   - Contact Think.Check.Submit about using their check?
+ *   - Does FORCE11 have a recommendation for licensing (CC BY 
+ *     preferred? Ask authors to think of a good reason not to use CC BY?)
+ *   - Still struggling with adding comment boxes to terminate: reject
+ *     doesn't look right!
  *>
   
  <-- check if the author has finished writing
@@ -16,7 +24,10 @@
 	{yes: [set: complete=yes]
 	
 		<-- let's ask about preprints
-		[ask: {text: Have you submitted a preprint?}
+		[>qPreprint< ask: {text: Have you submitted a preprint?}
+		{terms:
+		     {preprints: a working paper or draft version posted online before peer review.}
+		}
 		{answers: 
 
 		<-- case where a preprint exists
@@ -25,13 +36,13 @@
 				{answers: 
 					{yes: [set: preprintFeedback=yes]}
 					{no: [set: preprintFeedback=no]
-						[todo: go back to have you submitted a preprint??]}
+						 [call: qPreprint]}
 				}]
 			} <-- end of 'yes' (preprint submitted)
 			
 			<-- where no preprint exists
 			{no: [set: preprint=no]
-				[todo: add something about posting preprints]
+				 [todo: add something about posting preprints]
 			} 
 		}]
 	} <-- end of 'yes' (writing complete)
@@ -40,7 +51,11 @@
 	{no:[set: complete=no]} 
 }] <-- end of asking about writing completeness
 
-[ask: {text: Do you know which journal you will submit to?}
+[>qJournal< ask: {text: Do you know which journal you will submit to?}
+{terms:
+	{open access: in this context, 'gold open access', i.e. a journal that makes paper freely available to download, reuse and mine as data immediately after publication.}
+	{DOAJ: the directory of open access journals, http://doaj.org}
+}
 {answers:
 
 	<-- fully open access journal
@@ -54,15 +69,32 @@
 	
 	<-- don't know yet
 	{no: [set: journalKnown=no]
-		[todo: tell author to consult DOAJ and think.check.submit]
-		[todo: add a goto this question again]
+		[reject: consult the Directory of Open Access Journals]
+		[call: qJournal] <-- Go back to asking about which journal.
 	}
 		
 
 }]
 
+<-- Check the Think.Check.Submit Guidelines
+[ask: {text: Does the journal match most of the Think Check Submit guidelines?}
+{terms:
+	{think.check.submit: guidelines at thinkchecksubmit.org/check for choosing a good journal}
+}
+{answers:
+	{yes: [set: tcs=yes]}
+	{no: [set:tcs=no]
+		 [call: qJournal]
+	}
+}]
+
 <-- let's see about licensing
 [ask: {text: Does the journal provide a choice of licenses?}
+{terms:
+	{copyright: defines ownership of the document and who has the right to determine its use.}
+	{license: defines how the document can be used, e.g. who can distribute, read or reuse it.}
+	{creative commons: a licensing organisation that produces licenses intended to be open, see https://creativecommons.org. }
+}
 {answers:
 
 	<-- range of licensing choices

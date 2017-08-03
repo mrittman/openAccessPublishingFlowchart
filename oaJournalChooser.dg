@@ -16,40 +16,29 @@
  *     doesn't look right!
  *>
   
- <-- check if the author has finished writing
-[ask: {text: Is your manuscript complete?}
+
+<-- let's ask about preprints
+[>qPreprint< ask: {text: Have you submitted a preprint?}
+{terms:
+	 {preprints: a working paper or draft version posted online before peer review.}
+}
 {answers: 
 
-	<-- case where the author has completed writing
-	{yes: [set: complete=yes]
-	
-		<-- let's ask about preprints
-		[>qPreprint< ask: {text: Have you submitted a preprint?}
-		{terms:
-		     {preprints: a working paper or draft version posted online before peer review.}
-		}
+<-- case where a preprint exists
+	{yes: [set: preprint=yes]
+		[ask: {text: Have you incorporated any feedback you received from the preprint?}
 		{answers: 
-
-		<-- case where a preprint exists
-			{yes: [set: preprint=yes]
-				[ask: {text: Have you incorporated any feedback you received from the preprint?}
-				{answers: 
-					{yes: [set: preprintFeedback=yes]}
-					{no: [set: preprintFeedback=no]
-						 [call: qPreprint]}
-				}]
-			} <-- end of 'yes' (preprint submitted)
-			
-			<-- where no preprint exists
-			{no: [set: preprint=no]
-				 [todo: add something about posting preprints]
-			} 
+			{yes: [set: preprintFeedback=yes]}
+			{no: [set: preprintFeedback=no]
+				 [call: qPreprint]}
 		}]
-	} <-- end of 'yes' (writing complete)
+	} <-- end of 'yes' (preprint submitted)
 	
-	<-- where writing is not complete
-	{no:[set: complete=no]} 
-}] <-- end of asking about writing completeness
+	<-- where no preprint exists
+	{no: [set: preprint=no]
+		 [todo: go to a separate tree about posting preprints]
+	} 
+}]
 
 [>qJournal< ask: {text: Do you know which journal you will submit to?}
 {terms:
@@ -92,7 +81,7 @@
 [ask: {text: Does the journal provide a choice of licenses?}
 {terms:
 	{copyright: defines ownership of the document and who has the right to determine its use.}
-	{license: defines how the document can be used, e.g. who can distribute, read or reuse it.}
+	{license: defines how the document can be used, including who can distribute, read or reuse it.}
 	{creative commons: a licensing organisation that produces licenses intended to be open, see https://creativecommons.org. }
 }
 {answers:

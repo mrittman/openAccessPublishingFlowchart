@@ -43,26 +43,27 @@
 [>qJournal< ask: {text: Do you know which journal you will submit to?}
 {terms:
 	{open access: in this context, 'gold open access', i.e. a journal that makes paper freely available to download, reuse and mine as data immediately after publication.}
-	{DOAJ: the directory of open access journals, http://doaj.org}
+	{DOAJ: the directory of open access journals, http://doaj.org }
 }
 {answers:
 
 	<-- fully open access journal
-	{yes, a fully open access journal: [set: journalKnown=oa]}
+	{yes, fully OA: [set: journalKnown=oa]}
 	
 	<-- hybrid journal
-	{yes, a non-open journal with an open access option: [set: journalKnown=hybrid]}
+	{yes, has OA option: [set: journalKnown=hybrid]}
 	
 	<-- no open access option
-	{yes, and it has no gold open access option: [set: journalKnown=notOpen]}
+	{yes, not OA: [set: journalKnown=notOpen]}
 	
-	<-- don't know yet
+	<-- don't know yet: direct towards DOAJ
 	{no: [set: journalKnown=no]
-		[reject: consult the Directory of Open Access Journals]
-		[call: qJournal] <-- Go back to asking about which journal.
+		[ask: {text: Consult the Directory of Open Access Journals https://doaj.org }
+		{answers:
+			<-- go back and ask if they have chosen a journal yet
+			{ok: [call: qJournal]}
+		}]
 	}
-		
-
 }]
 
 <-- Check the Think.Check.Submit Guidelines
@@ -90,6 +91,5 @@
 	{yes: [set: licenses=many]}
 	
 	<-- only one choice of license
-	{no: [set: licenses=single]}
-	
+	{no: [set: licenses=single]}	
 }]
